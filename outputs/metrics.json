@@ -1,31 +1,31 @@
 {
   "holdout": {
     "baseline_median_rpm_by_equipment": {
-      "MAE": 175.23,
+      "MAE": 175.09,
       "RMSE": 258.15,
-      "MAPE_%": 8.13
+      "MAPE_%": 8.09
     },
     "baseline_quote_signal_x_distance": {
-      "MAE": 192.56,
-      "RMSE": 344.44,
-      "MAPE_%": 9.89
+      "MAE": 192.37,
+      "RMSE": 344.31,
+      "MAPE_%": 9.87
     },
     "lightgbm": {
-      "MAE": 82.2,
-      "RMSE": 118.08,
-      "MAPE_%": 3.2
+      "MAE": 81.97,
+      "RMSE": 117.87,
+      "MAPE_%": 3.18
     }
   },
   "holdout_by_month": {
     "9": {
-      "MAE": 86.43,
-      "RMSE": 126.29,
-      "MAPE_%": 3.25
+      "MAE": 86.3,
+      "RMSE": 125.89,
+      "MAPE_%": 3.24
     },
     "10": {
-      "MAE": 78.12,
-      "RMSE": 109.56,
-      "MAPE_%": 3.15
+      "MAE": 77.79,
+      "RMSE": 109.58,
+      "MAPE_%": 3.12
     }
   },
   "best_iteration": 157,

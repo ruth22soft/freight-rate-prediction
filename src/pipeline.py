@@ -55,7 +55,7 @@ def learn_reference(train):
     return {
         "weight_median": float(train["weight"].abs().median()),
         "market_index_median": float(train["market_index"].median()),
-        "detour": float(normal.median()),   # road miles / straight-line miles
+        "detour": float(normal.median()),
         "max_detour": 1.5,
     }
 
@@ -63,30 +63,26 @@ def learn_reference(train):
 def clean(df, ref, name):
     df = df.copy()
     df["date"] = pd.to_datetime(df["date"])
-
     # 1. Negative weights are a sign error -> take absolute value
     neg = df["weight"] < 0
     df.loc[neg, "weight"] = df.loc[neg, "weight"].abs()
-
     # 2. Missing weight -> training median (+ flag)
     df["weight_was_missing"] = df["weight"].isna().astype(int)
     df["weight"] = df["weight"].fillna(ref["weight_median"])
-
     # 3. Missing market_index -> median of the same day (+ flag)
     df["market_index_was_missing"] = df["market_index"].isna().astype(int)
     daily = df.groupby("date")["market_index"].transform("median")
     df["market_index"] = df["market_index"].fillna(daily).fillna(ref["market_index_median"])
 
-    # 4. Impossible distances -> straight-line distance x typical detour
-    straight = straight_line(df)
-    ratio = df["distance"] / straight
-    bad = (ratio > ref["max_detour"]) | (ratio < 1.0)
-    df.loc[bad, "distance"] = (straight[bad] * ref["detour"]).round(1)
+    # 4. Distance check: high road/straight-line ratios are short trips (routing detours and
+    #    a 70-mile minimum), not errors, so recorded distances are kept and only reported.
+    ratio = df["distance"] / straight_line(df)
+    high_ratio = int(((ratio > ref["max_detour"]) | (ratio < 1.0)).sum())
 
     print(f"[clean {name}] negative weights fixed: {int(neg.sum())} | "
           f"missing weight filled: {int(df['weight_was_missing'].sum())} | "
           f"missing market_index filled: {int(df['market_index_was_missing'].sum())} | "
-          f"bad distances replaced: {int(bad.sum())}")
+          f"short trips with high distance ratio (kept): {high_ratio}")
     return df
 
 
@@ -130,13 +126,11 @@ def build_december(raw_dec, raw_train, raw_valid, valid):
         df[[f"{s}", f"{s}_lat", f"{s}_lon"]].set_axis(["city", "lat", "lon"], axis=1)
         for df in (raw_train, raw_valid) for s in ("pickup", "delivery")
     ]).drop_duplicates("city").set_index("city")
-
     d = raw_dec.copy()
     d["date"] = pd.to_datetime(d["date"])
     for s in ("pickup", "delivery"):
         d[f"{s}_lat"] = d[s].map(coords["lat"])
         d[f"{s}_lon"] = d[s].map(coords["lon"])
-
     # Market inputs are not given for December -> daily median of real Dry Van loads on that date
     dry_van = valid[valid["equipment"] == "Dry Van"]
     daily = dry_van.groupby("date")[["market_index", "quote_signal"]].median()
@@ -144,7 +138,6 @@ def build_december(raw_dec, raw_train, raw_valid, valid):
     d["weight_was_missing"] = 0
     d["market_index_was_missing"] = 0
     d = add_features(d)
-
     missing = d[FEATURES].isna().sum()
     assert missing.sum() == 0, f"December features missing: {missing[missing > 0].to_dict()}"
     return d
@@ -218,7 +211,7 @@ def main():
     assert (submission["predicted_rate"] > 0).all()
     submission.to_csv("validation_predictions.csv", index=False)
     print(f"\n[output] validation_predictions.csv written: {len(submission):,} rows, "
-          f"median ${submission['predicted_rate'].median():,.0f}")
+          f"median ${submission['predicted_rate'].median():,.0f}, min ${submission['predicted_rate'].min():,.0f}")
 
     # ---- December chart predictions
     dec_features = build_december(raw_dec, raw_train, raw_valid, valid)
@@ -228,8 +221,9 @@ def main():
     print(f"[output] December predictions: min ${dec_out['predicted_rate'].min():,.0f}, "
           f"max ${dec_out['predicted_rate'].max():,.0f}")
 
-    json.dump({"holdout": results, "holdout_by_month": by_month, "best_iteration": best_iter,
-               "reference": ref}, open(OUT_DIR / "metrics.json", "w"), indent=2)
+    with open(OUT_DIR / "metrics.json", "w") as f:
+        json.dump({"holdout": results, "holdout_by_month": by_month, "best_iteration": best_iter,
+                   "reference": ref}, f, indent=2)
 
 
 if __name__ == "__main__":
