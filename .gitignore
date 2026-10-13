@@ -1,0 +1,31 @@
+# Virtual environment (huge, and reviewers create their own)
+venv/
+.venv/
+env/
+
+# Python cache files
+__pycache__/
+*.pyc
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+# Secrets (never push these)
+.env
+
+# Editor and OS junk
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Raw input data (provided by Spotter, so no need to re-upload)
+data/*.csv
+
+# Large model files
+*.pkl
+*.joblib
+*.txt.model
+
+# Scratch output
+outputs/inspect.txt
