@@ -1,0 +1,17 @@
+,gain_%
+distance,68.74
+straight_miles,30.07
+equipment,0.57
+quote_signal,0.25
+weight,0.11
+lon_change,0.09
+market_index,0.08
+pickup_lat,0.03
+delivery_lat,0.02
+pickup_lon,0.02
+delivery_lon,0.02
+lat_change,0.01
+day_of_week,0.0
+is_weekend,0.0
+weight_was_missing,0.0
+market_index_was_missing,0.0

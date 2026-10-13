@@ -1,0 +1,38 @@
+{
+  "holdout": {
+    "baseline_median_rpm_by_equipment": {
+      "MAE": 175.23,
+      "RMSE": 258.15,
+      "MAPE_%": 8.13
+    },
+    "baseline_quote_signal_x_distance": {
+      "MAE": 192.56,
+      "RMSE": 344.44,
+      "MAPE_%": 9.89
+    },
+    "lightgbm": {
+      "MAE": 82.2,
+      "RMSE": 118.08,
+      "MAPE_%": 3.2
+    }
+  },
+  "holdout_by_month": {
+    "9": {
+      "MAE": 86.43,
+      "RMSE": 126.29,
+      "MAPE_%": 3.25
+    },
+    "10": {
+      "MAE": 78.12,
+      "RMSE": 109.56,
+      "MAPE_%": 3.15
+    }
+  },
+  "best_iteration": 157,
+  "reference": {
+    "weight_median": 31496.0,
+    "market_index_median": 1.0558,
+    "detour": 1.1820531994705514,
+    "max_detour": 1.5
+  }
+}

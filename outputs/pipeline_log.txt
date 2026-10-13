@@ -1,0 +1,33 @@
+﻿[reference] typical road/straight-line ratio: 1.182
+[clean train-test] negative weights fixed: 292 | missing weight filled: 300 | missing market_index filled: 374 | bad distances replaced: 214
+[outliers] removed 697 rows (1.45%) with implausible rate per mile
+[clean validation] negative weights fixed: 145 | missing weight filled: 165 | missing market_index filled: 249 | bad distances replaced: 55
+[split] train Jan-Aug: 37,930 rows | holdout Sep-Oct: 9,373 rows
+
+[holdout Sep-Oct results]
+  baseline_median_rpm_by_equipment     {'MAE': 175.23, 'RMSE': 258.15, 'MAPE_%': 8.13}
+  baseline_quote_signal_x_distance     {'MAE': 192.56, 'RMSE': 344.44, 'MAPE_%': 9.89}
+  lightgbm                             {'MAE': 82.2, 'RMSE': 118.08, 'MAPE_%': 3.2}
+  LightGBM by month: {'9': {'MAE': 86.43, 'RMSE': 126.29, 'MAPE_%': 3.25}, '10': {'MAE': 78.12, 'RMSE': 109.56, 'MAPE_%': 3.15}}
+  best iteration: 157
+
+[feature importance, % of gain]
+distance                    68.74
+straight_miles              30.07
+equipment                    0.57
+quote_signal                 0.25
+weight                       0.11
+lon_change                   0.09
+market_index                 0.08
+pickup_lat                   0.03
+delivery_lat                 0.02
+pickup_lon                   0.02
+delivery_lon                 0.02
+lat_change                   0.01
+day_of_week                  0.00
+is_weekend                   0.00
+weight_was_missing           0.00
+market_index_was_missing     0.00
+
+[output] validation_predictions.csv written: 12,000 rows, median $1,998
+[output] December predictions: min $808, max $818
